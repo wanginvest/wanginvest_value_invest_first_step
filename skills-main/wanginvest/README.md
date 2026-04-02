@@ -19,13 +19,13 @@
 
 ## 安装
 
-### 1\. 复制技能到 Claude Code 技能目录
+### 1. 复制技能到 Claude Code 技能目录
 
 ```bash
-cp -r mrdang \~/.claude/skills/
+cp -r mrdang ~/.claude/skills/
 ```
 
-### 2\. 安装 Python 依赖
+### 2. 安装 Python 依赖
 
 ```bash
 cd mrdang/scripts
@@ -38,14 +38,14 @@ pip install tushare requests pandas
 uv pip install tushare requests pandas
 ```
 
-### 3\. 配置环境变量
+### 3. 配置环境变量
 
 ```bash
 # Tushare API Token (必需)
-export TUSHARE\_TOKEN="your\_tushare\_token"
+export TUSHARE_TOKEN="your_tushare_token"
 
 # Tavily API Key (必需)
-export TAVILY\_API\_KEY="your\_tavily\_api\_key"
+export TAVILY_API_KEY="your_tavily_api_key"
 ```
 
 获取 API 密钥:
@@ -68,27 +68,27 @@ MR Dang 打分 中国神华
 ### 直接调用 Python 函数
 
 ```python
-from scripts.data import search\_stock, get\_all\_data
-from scripts.search import search\_company\_info
-from scripts.report import save\_report
+from scripts.data import search_stock, get_all_data
+from scripts.search import search_company_info
+from scripts.report import save_report
 
 # 搜索股票
-result = search\_stock("招商银行")
-ts\_code = result.iloc\[0]\["ts\_code"]
+result = search_stock("招商银行")
+ts_code = result.iloc[0]["ts_code"]
 
 # 获取所有数据
-data = get\_all\_data(ts\_code)
+data = get_all_data(ts_code)
 
 # 搜索公司信息
-search\_results = search\_company\_info("招商银行", "银行")
+search_results = search_company_info("招商银行", "银行")
 
 # 保存报告
-filepath = save\_report(
-    stock\_name="招商银行",
-    ts\_code=ts\_code,
+filepath = save_report(
+    stock_name="招商银行",
+    ts_code=ts_code,
     industry="银行",
     data=data,
-    search\_results=search\_results,
+    search_results=search_results,
     scores={...},
     screening={...},
     checklist={...},
@@ -100,26 +100,26 @@ filepath = save\_report(
 
 ### 8维度打分（总分100）
 
-|维度|满分|说明|
-|-|-|-|
-|生产资料属性|20|资源/银行/重资产得分高|
-|股息率|20|≥5%满分，＜2%淘汰|
-|估值|15|PE≤10满分|
-|资源/成本优势|15|仅资源/制造启用|
-|行业竞争位置|10|龙头得分高|
-|地域因素|10|仅银行/区域股启用|
-|流动性与财务安全|5|市值/负债/现金流|
-|逻辑清晰度|5|业务复杂度|
+| 维度       | 满分  | 说明           |
+| -------- | --- | ------------ |
+| 生产资料属性   | 20  | 资源/银行/重资产得分高 |
+| 股息率      | 20  | ≥5%满分，＜2%淘汰  |
+| 估值       | 15  | PE≤10满分      |
+| 资源/成本优势  | 15  | 仅资源/制造启用     |
+| 行业竞争位置   | 10  | 龙头得分高        |
+| 地域因素     | 10  | 仅银行/区域股启用    |
+| 流动性与财务安全 | 5   | 市值/负债/现金流    |
+| 逻辑清晰度    | 5   | 业务复杂度        |
 
 ### 评级标准
 
-|分数|评级|建议|
-|-|-|-|
-|80-100|⭐⭐⭐⭐⭐|重点关注、可建仓|
-|60-79|⭐⭐⭐⭐|可分批买入|
-|40-59|⭐⭐⭐|谨慎观察|
-|20-39|⭐⭐|建议回避|
-|0-19|⭐|直接排除|
+| 分数     | 评级    | 建议       |
+| ------ | ----- | -------- |
+| 80-100 | ⭐⭐⭐⭐⭐ | 重点关注、可建仓 |
+| 60-79  | ⭐⭐⭐⭐  | 可分批买入    |
+| 40-59  | ⭐⭐⭐   | 谨慎观察     |
+| 20-39  | ⭐⭐    | 建议回避     |
+| 0-19   | ⭐     | 直接排除     |
 
 ## 文件结构
 
@@ -128,7 +128,7 @@ mrdang/
 ├── SKILL.md          # Claude Code 技能定义
 ├── README.md         # 本文档
 └── scripts/          # Python 脚本
-    ├── \_\_init\_\_.py   # 包导出
+    ├── __init__.py   # 包导出
     ├── data.py       # Tushare 数据获取
     ├── search.py     # Tavily 网络搜索
     └── report.py     # 报告生成与保存
@@ -138,35 +138,35 @@ mrdang/
 
 ### data.py - 数据获取
 
-|函数|说明|
-|-|-|
-|`search\_stock(keyword)`|搜索股票代码|
-|`get\_stock\_basic(ts\_code)`|获取股票基础信息|
-|`get\_daily\_basic(ts\_code)`|获取 PE/PB/市值等|
-|`get\_financial\_indicator(ts\_code)`|获取财务指标|
-|`get\_dividend\_info(ts\_code)`|获取分红信息|
-|`get\_price\_position(ts\_code)`|计算股价位置|
-|`get\_all\_data(ts\_code)`|获取所有数据|
+| 函数                                    | 说明           |
+| ------------------------------------- | ------------ |
+| `search_stock(keyword)`              | 搜索股票代码       |
+| `get_stock_basic(ts_code)`         | 获取股票基础信息     |
+| `get_daily_basic(ts_code)`         | 获取 PE/PB/市值等 |
+| `get_financial_indicator(ts_code)` | 获取财务指标       |
+| `get_dividend_info(ts_code)`       | 获取分红信息       |
+| `get_price_position(ts_code)`      | 计算股价位置       |
+| `get_all_data(ts_code)`            | 获取所有数据       |
 
 ### search.py - 网络搜索
 
-|函数|说明|
-|-|-|
-|`tavily\_search(query)`|Tavily API 搜索|
-|`search\_company\_info(name, industry)`|搜索公司全面信息|
-|`extract\_search\_content(results)`|提取搜索摘要|
+| 函数                                      | 说明            |
+| --------------------------------------- | ------------- |
+| `tavily_search(query)`                 | Tavily API 搜索 |
+| `search_company_info(name, industry)` | 搜索公司全面信息      |
+| `extract_search_content(results)`     | 提取搜索摘要        |
 
 ### report.py - 报告生成
 
-|函数|说明|
-|-|-|
-|`generate\_report(...)`|生成报告内容|
-|`save\_report(...)`|保存报告到磁盘|
-|`get\_reports\_dir()`|获取报告目录|
+| 函数                      | 说明      |
+| ----------------------- | ------- |
+| `generate_report(...)` | 生成报告内容  |
+| `save_report(...)`     | 保存报告到磁盘 |
+| `get_reports_dir()`   | 获取报告目录  |
 
 ## 输出示例
 
-报告自动保存至当前目录 `./招商银行\_600036\_20260328.md`
+报告自动保存至当前目录 `./招商银行_600036_20260328.md`
 
 ```markdown
 # MR Dang 选股打分报告
@@ -209,4 +209,3 @@ mrdang/
 ## 许可证
 
 MIT License
-

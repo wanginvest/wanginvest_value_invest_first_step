@@ -1,9 +1,9 @@
 ---
-name: mrdang
-description: MR Dang 价值选股打分助手 - 根据 MR Dang 投资体系对 A 股进行风险筛查和多维度打分。触发词：MR Dang 选股、MR Dang 打分、MR Dang 分析
+name: wanginvest
+description: 基于知乎大V MR Dang 价值选股打分助手 - 根据 MR Dang 投资体系对 A 股进行风险筛查和多维度打分。触发词：MR Dang 选股、MR Dang 打分、MR Dang 分析。在此基础上作者（mr Wang）进行了一些优化，比如财务风险指标提示与公司业务成长角度分析
 ---
 
-# MR Dang 价值选股打分助手
+# wanginvest 价值选股打分助手
 
 根据 MR Dang 投资体系，对 A 股上市公司进行**标准化风险筛查 + 多维度打分 + 投资评级**。
 自动通过 **Tushare 获取财务/估值/分红数据** + **Tavily 搜索补充业务/行业/风险信息**。
@@ -18,20 +18,22 @@ description: MR Dang 价值选股打分助手 - 根据 MR Dang 投资体系对 A
 ## 触发方式
 
 用户输入示例：
+
 - MR Dang 选股 `<股票名称>`
 - MR Dang 打分 `<股票名称>` `<行业类型>`
 - 帮我用 MR Dang 体系分析 `<股票代码>`
 
 ## 可用脚本
 
-| 脚本 | 用途 |
-|------|------|
-| `scripts/data.py` | 从 Tushare 获取股票数据 |
+| 脚本                  | 用途               |
+| ------------------- | ---------------- |
+| `scripts/data.py`   | 从 Tushare 获取股票数据 |
 | `scripts/search.py` | 通过 Tavily 搜索网络信息 |
 
 所有脚本均遵循 **PEP 723** 标准，内置依赖声明，可直接用 `uv run` 执行，无需手动安装依赖。
 
 **环境变量要求：**
+
 - `TUSHARE_TOKEN` - Tushare API Token
 - `TAVILY_API_KEY` - Tavily API Key（搜索功能需要）
 
@@ -78,6 +80,7 @@ uv run scripts/data.py get <ts_code> --type price
 ```
 
 **必须获取的核心字段：**
+
 - PE(TTM)、PB、总市值、流通市值
 - 资产负债率、经营现金流、ROE
 - 近1年股息率、近3年分红稳定性、派息率
@@ -121,55 +124,65 @@ uv run scripts/search.py extract results.json --max-length 500
 ### 第五步：8 维度打分（总分 100）
 
 #### 1. 生产资料属性（20 分）
+
 - 资源/能源/公用/银行/重资产：18–20 分
 - 稳定制造业、渠道型：10–17 分
 - 轻资产、纯服务、题材型：0–9 分
 
 #### 2. 股息率（20 分）
+
 - ≥5%：20 分
 - 3%–5%：15 分
 - 2%–3%：8 分
 - ＜2%：0 分（直接淘汰）
 
 #### 3. 估值（15 分）
+
 - PE≤10 或 PB 历史低分位：15 分
 - PE 10–20：10 分
 - PE 20–30：5 分
 - PE＞30：0 分
 
 #### 4. 资源禀赋 / 成本优势（15 分）
+
 *仅资源/化工/制造启用，其他行业跳过*
+
 - 自有资源 / 成本行业前列：13–15 分
 - 一般成本、中等竞争力：6–12 分
 - 无优势、高成本、尾部企业：0–5 分
 
 #### 5. 行业与竞争位置（10 分）
+
 - 行业龙头/寡头/供需紧张：8–10 分
 - 中等地位、竞争温和：4–7 分
 - 尾部、内卷严重、价格战：0–3 分
 
 #### 6. 地域因素（10 分）
+
 *仅银行/区域股启用，其他跳过*
+
 - 经济发达、风险低：8–10 分
 - 地区一般：4–7 分
 - 高负债地区、地产风险高：0–3 分
 
 #### 7. 流动性与财务安全（5 分）
+
 - 市值适中、负债健康、现金流稳定：4–5 分
 - 小市值、负债偏高、现金流波动：0–3 分
 
 #### 8. 逻辑清晰度（5 分）
+
 根据业务复杂度打分。
 
 ### 第六步：总分评级
 
-| 分数 | 评级 | 操作建议 |
-|------|------|----------|
+| 分数     | 评级       | 操作建议     |
+| ------ | -------- | -------- |
 | 80–100 | ⭐⭐⭐⭐⭐ 优秀 | 重点关注、可建仓 |
-| 60–79 | ⭐⭐⭐⭐ 良好 | 可分批买入 |
-| 40–59 | ⭐⭐⭐ 一般 | 谨慎观察 |
-| 20–39 | ⭐⭐ 较差 | 建议回避 |
-| 0–19 | ⭐ 极差 | 直接排除 |
+| 60–79  | ⭐⭐⭐⭐ 良好  | 可分批买入    |
+| 40–59  | ⭐⭐⭐ 一般   | 谨慎观察     |
+| 20–39  | ⭐⭐ 较差    | 建议回避     |
+| 0–19   | ⭐ 极差     | 直接排除     |
 
 ### 第七步：买入前 10 项清单
 
@@ -185,6 +198,58 @@ uv run scripts/search.py extract results.json --max-length 500
 8. 跌 30% 仍敢加仓
 9. 没有更便宜更安全替代标的
 10. 有明确持有周期
+    
+    
+
+### 第八步：财务风险报告
+
+第一大类：经营风险
+
+1. 商誉/资产比率，即商誉占总资产的比例，是衡量企业资产结构质量和潜在风险的重要指标。商誉/资产>20% 提示，>35% 高风险。
+
+2. 存贷双高，指企业账面上同时存在大量货币资金和高额有息负债。_现金占比>25% 且 负债占比>35%。_
+
+3. 非经营依赖度：非经营项合计(近似)=投资收益+营业外净额（营业外收入-营业外支出） ，反应公司通过主营业务赚钱的能力
+
+非经营依赖度=非经营项合计(近似)/归母净利润
+
+提示值：0.3 危险值：0.5
+
+4.减值压力 = **资产减值损失****/归母净利润** 提示值：0.3 危险值：0.5
+
+5.“净资产增加的数字和每股收益的增加值对不上…给你弄进其他综合收益了。” 
+
+首先明确概念：
+
+净资产：所有者权益，等于资产减负债。
+
+每股收益：净利润除以总股本。
+
+两者之间的联系可以通过杜邦分析或其他财务关系来理解。净资产增加可能来自净利润（未分配利润）、资本公积变动（如增发）、其他综合收益等。每股收益增加主要依赖于净利润增加或股本不变/减少。
+
+**综合收益差异：****(综合收益-净利)****/净利** 提示值：0.2 危险值：0.4
+
+6.每股收益（EPS)一般就是投资者俗称的业绩。EPS：看的是结果，公司这一年到底赚了多少（不管是怎么赚的）。
+
+扣非EPS：看的是能力，公司靠主业能赚多少，排除了运气的成分。 提示值：0.15 危险值：0.3
+
+7. 净资产现金流支撑：累计经营现金流/净资产    建议使用 **5年****或以上****累计** 的数据。
+
+风险<1.0 危险<,0.5
+
+第二大类：分红安全垫
+
+1.估值分位带(10年)：PE偏低(<=30分位)，PB偏低(<=30分位)
+
+2. 现金流，净利润和分红的对比：经营现金流 > 归母净利润 > 分红金额（年度口径）
+
+3. 分红可持续性：近3年(年报)经营现金流可覆盖分红
+
+4. 利润结构/扣非：经营现金流（OCF）/扣非>=1，非经常性占比正常
+
+5. 有息负债成本：  警戒线（Warn）：0.1（10%）
+
+危险线（Danger）：0.2（20%）
 
 ## 行为约束
 
@@ -293,8 +358,10 @@ uv run scripts/search.py extract results.json --max-length 500
 **达标项：X / 10**
 
 ---
+## 六、价值投资财务指标风险
 
-## 六、综合结论
+
+## 七、综合结论
 
 {简洁总结是否适合跟踪、买入、回避}
 
@@ -307,25 +374,25 @@ uv run scripts/search.py extract results.json --max-length 500
 
 ### 数据获取 (scripts/data.py)
 
-| 命令 | 说明 |
-|------|------|
-| `uv run scripts/data.py search <关键词>` | 搜索股票代码 |
-| `uv run scripts/data.py get <ts_code> --type basic` | 股票基础信息 |
-| `uv run scripts/data.py get <ts_code> --type daily [--date YYYYMMDD]` | 每日指标 (PE, PB, 市值等) |
-| `uv run scripts/data.py get <ts_code> --type financial` | 财务指标摘要 |
-| `uv run scripts/data.py get <ts_code> --type financial-full [--periods N]` | 完整财务指标 |
-| `uv run scripts/data.py get <ts_code> --type dividend [--years N]` | 分红信息 |
-| `uv run scripts/data.py get <ts_code> --type ohlcv [--days N]` | 日线行情 |
-| `uv run scripts/data.py get <ts_code> --type price [--days N]` | 股价位置判断 |
-| `uv run scripts/data.py get <ts_code> --type all` | 获取所有数据 |
+| 命令                                                                         | 说明                 |
+| -------------------------------------------------------------------------- | ------------------ |
+| `uv run scripts/data.py search <关键词>`                                      | 搜索股票代码             |
+| `uv run scripts/data.py get <ts_code> --type basic`                        | 股票基础信息             |
+| `uv run scripts/data.py get <ts_code> --type daily [--date YYYYMMDD]`      | 每日指标 (PE, PB, 市值等) |
+| `uv run scripts/data.py get <ts_code> --type financial`                    | 财务指标摘要             |
+| `uv run scripts/data.py get <ts_code> --type financial-full [--periods N]` | 完整财务指标             |
+| `uv run scripts/data.py get <ts_code> --type dividend [--years N]`         | 分红信息               |
+| `uv run scripts/data.py get <ts_code> --type ohlcv [--days N]`             | 日线行情               |
+| `uv run scripts/data.py get <ts_code> --type price [--days N]`             | 股价位置判断             |
+| `uv run scripts/data.py get <ts_code> --type all`                          | 获取所有数据             |
 
 ### 网络搜索 (scripts/search.py)
 
-| 命令 | 说明 |
-|------|------|
+| 命令                                                                                | 说明        |
+| --------------------------------------------------------------------------------- | --------- |
 | `uv run scripts/search.py query <查询> [--max-results N] [--depth basic\|advanced]` | Tavily 搜索 |
-| `uv run scripts/search.py company <公司名> [--industry 行业]` | 搜索公司全面信息 |
-| `uv run scripts/search.py extract <json文件> [--max-length N]` | 提取搜索摘要 |
+| `uv run scripts/search.py company <公司名> [--industry 行业]`                          | 搜索公司全面信息  |
+| `uv run scripts/search.py extract <json文件> [--max-length N]`                      | 提取搜索摘要    |
 
 ## 示例执行流程
 
@@ -351,3 +418,5 @@ uv run scripts/search.py company <公司名称> --industry <行业>
 ```
 
 **输出**：在终端显示完整的选股打分报告
+
+
