@@ -10,7 +10,7 @@
 
 ## 安装
 
-将技能文件夹复制到 `\~/.claude/skills/`：
+将技能文件夹复制到 `~/.claude/skills/`：
 
 ```bash
 # 克隆仓库
@@ -18,13 +18,13 @@ git clone https://github.com/icrefin/skills.git
 cd skills
 
 # 安装技能
-cp -r <技能名称> \~/.claude/skills/
+cp -r <技能名称> ~/.claude/skills/
 ```
 
 ### 安装 wanginvest 技能
 
 ```bash
-cp -r wanginvest \~/.claude/skills/
+cp -r wanginvest ~/.claude/skills/
 ```
 
 ## 环境要求
