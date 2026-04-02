@@ -19,13 +19,13 @@
 
 ## 安装
 
-### 1\. 复制技能到 Claude Code 技能目录
+### 1. 复制技能到 Claude Code 技能目录
 
 ```bash
-cp -r mrdang \~/.claude/skills/
+cp -r mrdang ~/.claude/skills/
 ```
 
-### 2\. 安装 Python 依赖
+### 2. 安装 Python 依赖
 
 ```bash
 cd mrdang/scripts
@@ -42,10 +42,10 @@ uv pip install tushare requests pandas
 
 ```bash
 # Tushare API Token (必需)
-export TUSHARE\_TOKEN="your\_tushare\_token"
+export TUSHARE_TOKEN="your_tushare_token"
 
 # Tavily API Key (必需)
-export TAVILY\_API\_KEY="your\_tavily\_api\_key"
+export TAVILY_API_KEY="your_tavily_api_key"
 ```
 
 获取 API 密钥:
@@ -68,13 +68,13 @@ MR Dang 打分 中国神华
 ### 直接调用 Python 函数
 
 ```python
-from scripts.data import search\_stock, get\_all\_data
-from scripts.search import search\_company\_info
-from scripts.report import save\_report
+from scripts.data import search_stock, get_all_data
+from scripts.search import search_company_info
+from scripts.report import save_report
 
 # 搜索股票
-result = search\_stock("招商银行")
-ts\_code = result.iloc\[0]\["ts\_code"]
+result = search_stock("招商银行")
+ts_code = result.iloc[0]\["ts_code"]
 
 # 获取所有数据
 data = get\_all\_data(ts\_code)
