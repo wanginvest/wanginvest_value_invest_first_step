@@ -72,50 +72,28 @@ def search_company_info(company_name: str, industry: str = "") -> dict[str, list
     Returns:
         Dictionary with categorized search results
     """
-    results = {}
+    from concurrent.futures import ThreadPoolExecutor, as_completed
 
-    # 1. 主营业务搜索
-    results["business"] = tavily_search(
-        query=f"{company_name} 主营业务 业务构成 产品结构",
-        max_results=3,
-        search_depth="advanced",
-    ).get("results", [])
-
-    # 2. 行业地位搜索
-    results["position"] = tavily_search(
-        query=f"{company_name} 行业地位 竞争优势 市场份额",
-        max_results=3,
-        search_depth="advanced",
-    ).get("results", [])
-
-    # 3. 周期性判断
-    results["cycle"] = tavily_search(
-        query=f"{company_name} 是否周期股 产能周期 行业景气度",
-        max_results=3,
-        search_depth="basic",
-    ).get("results", [])
-
-    # 4. 再融资情况
-    results["financing"] = tavily_search(
-        query=f"{company_name} 增发 配股 再融资 近三年",
-        max_results=3,
-        search_depth="basic",
-    ).get("results", [])
-
-    # 5. 资产属性判断
-    results["asset_type"] = tavily_search(
-        query=f"{company_name} 生产资料属性 重资产还是轻资产 产能投资",
-        max_results=3,
-        search_depth="basic",
-    ).get("results", [])
-
-    # 6. 银行股专用
+    queries = {
+        "business": (f"{company_name} 主营业务 业务构成 产品结构", 3, "advanced"),
+        "position": (f"{company_name} 行业地位 竞争优势 市场份额", 3, "advanced"),
+        "cycle": (f"{company_name} 是否周期股 产能周期 行业景气度", 3, "basic"),
+        "financing": (f"{company_name} 增发 配股 再融资 近三年", 3, "basic"),
+        "asset_type": (f"{company_name} 生产资料属性 重资产还是轻资产 产能投资", 3, "basic"),
+    }
     if industry == "银行":
-        results["bank_risk"] = tavily_search(
-            query=f"{company_name} 区域经济 房地产风险 不良率 拨备覆盖率",
-            max_results=3,
-            search_depth="basic",
-        ).get("results", [])
+        queries["bank_risk"] = (f"{company_name} 区域经济 房地产风险 不良率 拨备覆盖率", 3, "basic")
+
+    results: dict[str, list[dict[str, Any]]] = {}
+
+    def fetch(key: str, query: str, max_results: int, depth: str) -> tuple[str, list]:
+        return key, tavily_search(query=query, max_results=max_results, search_depth=depth).get("results", [])
+
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        futures = {executor.submit(fetch, k, q, n, d): k for k, (q, n, d) in queries.items()}
+        for future in as_completed(futures):
+            key, data = future.result()
+            results[key] = data
 
     return results
 

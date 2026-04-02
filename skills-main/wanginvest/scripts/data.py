@@ -67,14 +67,12 @@ def get_daily_basic(ts_code: str, trade_date: str | None = None) -> dict[str, An
         Dictionary with daily basic metrics
     """
     if trade_date is None:
-        # Get latest trading date
-        today = datetime.now()
-        # Try last 10 days to find a trading day
-        for i in range(10):
-            check_date = (today - timedelta(days=i)).strftime("%Y%m%d")
-            df = pro.daily_basic(ts_code=ts_code, trade_date=check_date)
-            if not df.empty:
-                break
+        # Fetch recent records and take the latest — one API call instead of up to 10
+        end_date = datetime.now().strftime("%Y%m%d")
+        start_date = (datetime.now() - timedelta(days=14)).strftime("%Y%m%d")
+        df = pro.daily_basic(ts_code=ts_code, start_date=start_date, end_date=end_date)
+        if not df.empty:
+            df = df.sort_values("trade_date", ascending=False)
     else:
         df = pro.daily_basic(ts_code=ts_code, trade_date=trade_date)
 
@@ -307,13 +305,26 @@ def get_all_data(ts_code: str) -> dict[str, Any]:
     Returns:
         Dictionary with all stock data
     """
-    return {
-        "basic": get_stock_basic(ts_code),
-        "daily_basic": get_daily_basic(ts_code),
-        "financial": get_financial_indicator_summary(ts_code),
-        "dividend": get_dividend_info(ts_code),
-        "price_position": get_price_position(ts_code),
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+
+    tasks = {
+        "basic": lambda: get_stock_basic(ts_code),
+        "daily_basic": lambda: get_daily_basic(ts_code),
+        "financial": lambda: get_financial_indicator_summary(ts_code),
+        "dividend": lambda: get_dividend_info(ts_code),
+        "price_position": lambda: get_price_position(ts_code),
     }
+
+    results: dict[str, Any] = {}
+    with ThreadPoolExecutor(max_workers=5) as executor:
+        futures = {executor.submit(fn): key for key, fn in tasks.items()}
+        for future in as_completed(futures):
+            key = futures[future]
+            try:
+                results[key] = future.result()
+            except Exception as e:
+                results[key] = {"error": str(e)}
+    return results
 
 
 def main() -> None:
