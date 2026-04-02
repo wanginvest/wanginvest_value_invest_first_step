@@ -1,9 +1,12 @@
-    name: wanginvest
-    description: 基于知乎大V MR Dang 价值选股打分助手 - 根据 MR Dang 投资体系对 A 股进行风险筛查和多维度打分。触发词：MR Dang 选股、MR Dang 打分、MR Dang 分析。在此基础上作者（mr Wang）进行了一些优化，比如财务风险指标提示与公司业务成长角度分析
+---
+name: wanginvest
+description: 基于知乎大V MR Dang 价值选股打分助手 - 根据 MR Dang 投资体系对 A 股进行风险筛查和多维度打分。触发词：MR Dang 选股、MR Dang 打分、MR Dang 分析。在此基础上作者（mr Wang）进行了一些优化，比如财务风险指标提示与公司业务成长角度分析
+---
 
 # wanginvest 价值选股打分助手
 
-根据 MR Dang 投资体系，对 A 股上市公司进行**标准化风险筛查 + 多维度打分 + 投资评级**。自动通过 **Tushare 获取财务/估值/分红数据** + **Tavily 搜索补充业务/行业/风险信息**。
+根据 MR Dang 投资体系，对 A 股上市公司进行**标准化风险筛查 + 多维度打分 + 投资评级**。
+自动通过 **Tushare 获取财务/估值/分红数据** + **Tavily 搜索补充业务/行业/风险信息**。
 
 ## 核心规则
 
@@ -16,31 +19,24 @@
 
 用户输入示例：
 
-* MR Dang 选股 `<股票名称>`
-* MR Dang 打分 `<股票名称>` `<行业类型>`
-* 帮我用 MR Dang 体系分析 `<股票代码>`
+- MR Dang 选股 `<股票名称>`
+- MR Dang 打分 `<股票名称>` `<行业类型>`
+- 帮我用 MR Dang 体系分析 `<股票代码>`
 
 ## 可用脚本
 
-<<<<<<< HEAD
 | 脚本                  | 用途                    |
 | ------------------- | --------------------- |
 | `scripts/data.py`   | 从 Tushare 获取股票数据      |
 | `scripts/search.py` | 通过 Tavily 搜索网络信息      |
 | `scripts/report.py` | 将分析 JSON 生成可读 DOCX 报告 |
-=======
-| 脚本  | 用途  |
-| --- | --- |
-| `scripts/data.py` | 从 Tushare 获取股票数据 |
-| `scripts/search.py` | 通过 Tavily 搜索网络信息 |
->>>>>>> 0ed5f76a70cfc6a7b7c91fca3ad4c7a6eebd2c22
 
 所有脚本均遵循 **PEP 723** 标准，内置依赖声明，可直接用 `uv run` 执行，无需手动安装依赖。
 
 **环境变量要求：**
 
-* `TUSHARE_TOKEN` - Tushare API Token
-* `TAVILY_API_KEY` - Tavily API Key（搜索功能需要）
+- `TUSHARE_TOKEN` - Tushare API Token
+- `TAVILY_API_KEY` - Tavily API Key（搜索功能需要）
 
 ## 执行流程
 
@@ -48,7 +44,9 @@
 
 如果用户提供股票名称，先用 Tushare 查询股票代码：
 
-    uv run scripts/data.py search <股票名称或代码>
+```bash
+uv run scripts/data.py search <股票名称或代码>
+```
 
 输出包含 ts_code、名称、行业、上市日期等信息。
 
@@ -56,50 +54,54 @@
 
 使用 Tushare 获取以下数据：
 
-    # 获取所有数据（推荐）
-    uv run scripts/data.py get <ts_code> --type all
-    
-    # 获取基础信息
-    uv run scripts/data.py get <ts_code> --type basic
-    
-    # 获取每日指标 (PE, PB, 市值等)
-    uv run scripts/data.py get <ts_code> --type daily
-    
-    # 获取财务指标
-    uv run scripts/data.py get <ts_code> --type financial
-    
-    # 获取完整财务指标（多期）
-    uv run scripts/data.py get <ts_code> --type financial-full --periods 8
-    
-    # 获取分红信息
-    uv run scripts/data.py get <ts_code> --type dividend --years 5
-    
-    # 获取日线行情
-    uv run scripts/data.py get <ts_code> --type ohlcv --days 250
-    
-    # 获取股价位置判断
-    uv run scripts/data.py get <ts_code> --type price
+```bash
+# 获取所有数据（推荐）
+uv run scripts/data.py get <ts_code> --type all
+
+# 获取基础信息
+uv run scripts/data.py get <ts_code> --type basic
+
+# 获取每日指标 (PE, PB, 市值等)
+uv run scripts/data.py get <ts_code> --type daily
+
+# 获取财务指标
+uv run scripts/data.py get <ts_code> --type financial
+
+# 获取完整财务指标（多期）
+uv run scripts/data.py get <ts_code> --type financial-full --periods 8
+
+# 获取分红信息
+uv run scripts/data.py get <ts_code> --type dividend --years 5
+
+# 获取日线行情
+uv run scripts/data.py get <ts_code> --type ohlcv --days 250
+
+# 获取股价位置判断
+uv run scripts/data.py get <ts_code> --type price
+```
 
 **必须获取的核心字段：**
 
-* PE(TTM)、PB、总市值、流通市值
-* 资产负债率、经营现金流、ROE
-* 近1年股息率、近3年分红稳定性、派息率
-* 近期增发/解禁情况
+- PE(TTM)、PB、总市值、流通市值
+- 资产负债率、经营现金流、ROE
+- 近1年股息率、近3年分红稳定性、派息率
+- 近期增发/解禁情况
 
 ### 第三步：Tavily 搜索非结构化信息
 
 使用 `scripts/search.py` 搜索以下内容：
 
-    # 搜索公司全面信息
-    uv run scripts/search.py company <公司名称> --industry <行业>
-    
-    # 单独搜索
-    uv run scripts/search.py query "<公司名称> 主营业务" --max-results 5 --depth advanced
-    uv run scripts/search.py query "<公司名称> 行业地位" --include-domains eastmoney.com
-    
-    # 从搜索结果提取摘要
-    uv run scripts/search.py extract results.json --max-length 500
+```bash
+# 搜索公司全面信息
+uv run scripts/search.py company <公司名称> --industry <行业>
+
+# 单独搜索
+uv run scripts/search.py query "<公司名称> 主营业务" --max-results 5 --depth advanced
+uv run scripts/search.py query "<公司名称> 行业地位" --include-domains eastmoney.com
+
+# 从搜索结果提取摘要
+uv run scripts/search.py extract results.json --max-length 500
+```
 
 **搜索模板（自动执行）：**
 
@@ -124,50 +126,50 @@
 
 #### 1. 生产资料属性（20 分）
 
-* 资源/能源/公用/银行/重资产：18–20 分
-* 稳定制造业、渠道型：10–17 分
-* 轻资产、纯服务、题材型：0–9 分
+- 资源/能源/公用/银行/重资产：18–20 分
+- 稳定制造业、渠道型：10–17 分
+- 轻资产、纯服务、题材型：0–9 分
 
 #### 2. 股息率（20 分）
 
-* ≥5%：20 分
-* 3%–5%：15 分
-* 2%–3%：8 分
-* ＜2%：0 分（直接淘汰）
+- ≥5%：20 分
+- 3%–5%：15 分
+- 2%–3%：8 分
+- ＜2%：0 分（直接淘汰）
 
 #### 3. 估值（15 分）
 
-* PE≤10 或 PB 历史低分位：15 分
-* PE 10–20：10 分
-* PE 20–30：5 分
-* PE＞30：0 分
+- PE≤10 或 PB 历史低分位：15 分
+- PE 10–20：10 分
+- PE 20–30：5 分
+- PE＞30：0 分
 
 #### 4. 资源禀赋 / 成本优势（15 分）
 
 *仅资源/化工/制造启用，其他行业跳过*
 
-* 自有资源 / 成本行业前列：13–15 分
-* 一般成本、中等竞争力：6–12 分
-* 无优势、高成本、尾部企业：0–5 分
+- 自有资源 / 成本行业前列：13–15 分
+- 一般成本、中等竞争力：6–12 分
+- 无优势、高成本、尾部企业：0–5 分
 
 #### 5. 行业与竞争位置（10 分）
 
-* 行业龙头/寡头/供需紧张：8–10 分
-* 中等地位、竞争温和：4–7 分
-* 尾部、内卷严重、价格战：0–3 分
+- 行业龙头/寡头/供需紧张：8–10 分
+- 中等地位、竞争温和：4–7 分
+- 尾部、内卷严重、价格战：0–3 分
 
 #### 6. 地域因素（10 分）
 
 *仅银行/区域股启用，其他跳过*
 
-* 经济发达、风险低：8–10 分
-* 地区一般：4–7 分
-* 高负债地区、地产风险高：0–3 分
+- 经济发达、风险低：8–10 分
+- 地区一般：4–7 分
+- 高负债地区、地产风险高：0–3 分
 
 #### 7. 流动性与财务安全（5 分）
 
-* 市值适中、负债健康、现金流稳定：4–5 分
-* 小市值、负债偏高、现金流波动：0–3 分
+- 市值适中、负债健康、现金流稳定：4–5 分
+- 小市值、负债偏高、现金流波动：0–3 分
 
 #### 8. 逻辑清晰度（5 分）
 
@@ -175,13 +177,13 @@
 
 ### 第六步：总分评级
 
-| 分数  | 评级  | 操作建议 |
-| --- | --- | --- |
+| 分数     | 评级       | 操作建议     |
+| ------ | -------- | -------- |
 | 80–100 | ⭐⭐⭐⭐⭐ 优秀 | 重点关注、可建仓 |
-| 60–79 | ⭐⭐⭐⭐ 良好 | 可分批买入 |
-| 40–59 | ⭐⭐⭐ 一般 | 谨慎观察 |
-| 20–39 | ⭐⭐ 较差 | 建议回避 |
-| 0–19 | ⭐ 极差 | 直接排除 |
+| 60–79  | ⭐⭐⭐⭐ 良好  | 可分批买入    |
+| 40–59  | ⭐⭐⭐ 一般   | 谨慎观察     |
+| 20–39  | ⭐⭐ 较差    | 建议回避     |
+| 0–19   | ⭐ 极差     | 直接排除     |
 
 ### 第七步：买入前 10 项清单
 
@@ -197,6 +199,8 @@
 8. 跌 30% 仍敢加仓
 9. 没有更便宜更安全替代标的
 10. 有明确持有周期
+    
+    
 
 ### 第八步：财务风险报告
 
@@ -248,11 +252,8 @@
 
 危险线（Danger）：0.2（20%）
 
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 0ed5f76a70cfc6a7b7c91fca3ad4c7a6eebd2c22
 ### 第九步：成长和风险量化
 
 价值投资对业务成长性要求不高，属于锦上添花的作用。
@@ -275,11 +276,8 @@
 
 以东方电缆为例：
 
-<<<<<<< HEAD
 行业特征和行业景气度：海缆行业具有**高技术壁垒、长认证周期、高资本投入**特征，形成高度集中的寡头垄断格局。行业整体趋势：（略）
 
-=======
->>>>>>> 0ed5f76a70cfc6a7b7c91fca3ad4c7a6eebd2c22
 未来6个月，我们认为东方电缆将迎来“业绩”与“估值”的双击：**
 
 交付旺季：Q2-Q3是传统的海洋施工黄金窗口期。青州五七、帆石一等重点项目将进入海缆交付高峰期，业绩环比将持续改善。
@@ -336,15 +334,12 @@
 
 可以使用你熟悉的其他估值模型交叉验证。
 
-<<<<<<< HEAD
 
 
 ### 第十步、读取scripts/report.py脚本明确使用方式，按脚本要求执行脚本生成报告文件
 
 
 
-=======
->>>>>>> 0ed5f76a70cfc6a7b7c91fca3ad4c7a6eebd2c22
 ## 行为约束
 
 1. **必须先获取数据，再打分，不许凭空估分**
@@ -352,7 +347,6 @@
 3. **数据缺失要标注【数据不足】，不隐瞒**
 4. **必须提示：本报告为投资参考，不构成投资建议**
 5. **银行股必须强调：PB 低不等于低估，要看资产质量**
-<<<<<<< HEAD
 6. **数据新鲜度要求（重要）**：
    - 优先使用**最新年报**（当年或上一完整财年）数据，明确标注报告期（如"2024年报"）
    - Tushare 财务数据须取最新已披露期（`end_date` 最大值），不得使用超过 18 个月的旧数据
@@ -362,147 +356,30 @@
    - 在报告 `meta.data_source` 字段中注明数据来源与报告期，例如：`Tushare（2024年报） + 东方财富/公司公告（2025-Q1） + Tavily`
 
 
-=======
-
-## 输出格式
-
-    # MR Dang 选股打分报告
-    
-    【标的】{股票名称}（{ts_code}）
-    【行业归类】{行业}
-    【分析日期】{日期}
-    
-    ---
-    
-    ## 一、基础筛查结果
-    
-    | 筛查项 | 结果 | 说明 |
-    |--------|------|------|
-    | 题材股筛查 | 通过/淘汰 | |
-    | 高估值筛查 | 通过/淘汰 | |
-    | 产能过剩筛查 | 通过/淘汰 | |
-    | 增发圈钱筛查 | 通过/淘汰 | |
-    | 逻辑复杂度筛查 | 通过/淘汰 | |
-    
-    **筛查结论**：通过 / 淘汰（原因：xxx）
-    
-    ---
-    
-    ## 二、核心数据概览
-    
-    ### 估值指标
-    | 指标 | 数值 | 说明 |
-    |------|------|------|
-    | PE(TTM) | | |
-    | PB | | |
-    | 总市值 | | |
-    | 流通市值 | | |
-    
-    ### 财务指标
-    | 指标 | 数值 | 说明 |
-    |------|------|------|
-    | 股息率(TTM) | | |
-    | 资产负债率 | | |
-    | ROE | | |
-    | 经营现金流 | | |
-    
-    ### 分红历史
-    | 指标 | 数值 | 说明 |
-    |------|------|------|
-    | 近3年分红次数 | | |
-    | 派息率 | | |
-    | 分红稳定性 | | |
-    
-    ### 业务概况
-    - **主营业务**：
-    - **行业地位**：
-    - **资源/成本优势**：
-    
-    ---
-    
-    ## 三、维度打分明细
-    
-    | 维度 | 得分 | 满分 | 评分依据 |
-    |------|------|------|----------|
-    | 生产资料属性 | | 20 | |
-    | 股息率 | | 20 | |
-    | 估值 | | 15 | |
-    | 资源/成本优势 | | 15 | （如不适用标注 N/A）|
-    | 行业竞争位置 | | 10 | |
-    | 地域因素 | | 10 | （如不适用标注 N/A）|
-    | 流动性与财务安全 | | 5 | |
-    | 逻辑清晰度 | | 5 | |
-    
-    **总分：__ / 100**
-    **评级：__ 星**
-    
-    ---
-    
-    ## 四、操作建议
-    
-    {根据分数与股息率给出明确结论}
-    
-    ---
-    
-    ## 五、买入前清单核验
-    
-    | 清单项 | 状态 | 说明 |
-    |--------|------|------|
-    | 三句话逻辑 | 达标/存疑 | |
-    | 生产资料属性 | 达标/存疑 | |
-    | 股息率≥3% | 达标/存疑 | |
-    | PE≤20 | 达标/存疑 | |
-    | 股价不在高位 | 达标/存疑 | |
-    | 不依赖短期财报 | 达标/存疑 | |
-    | 独立判断 | 达标/存疑 | |
-    | 跌30%敢加仓 | 达标/存疑 | |
-    | 无更优替代 | 达标/存疑 | |
-    | 明确持有周期 | 达标/存疑 | |
-    
-    **达标项：X / 10**
-    
-    ---
-    ## 六、价值投资财务指标风险
-    | 清单项 | 状态 | 说明 |
-    |--------|------|------|
-    | 商誉/资产比率 | 达标/提示/危险 | 该指标值达到x% |
-    略，同上
-    
-    ## 七、成长和风险量化
-    略，写一个简洁的包括具体分析的文字报告
-    
-    ## 七、综合结论
-    
-    {简洁总结是否适合跟踪、买入、回避}
-    
-    ---
-    
-    **风险提示**：本报告基于公开数据分析，不构成投资建议。投资有风险，入市需谨慎。
->>>>>>> 0ed5f76a70cfc6a7b7c91fca3ad4c7a6eebd2c22
 
 ## 可用命令
 
 ### 数据获取 (scripts/data.py)
 
-| 命令  | 说明  |
-| --- | --- |
-| `uv run scripts/data.py search <关键词>` | 搜索股票代码 |
-| `uv run scripts/data.py get <ts_code> --type basic` | 股票基础信息 |
-| `uv run scripts/data.py get <ts_code> --type daily [--date YYYYMMDD]` | 每日指标 (PE, PB, 市值等) |
-| `uv run scripts/data.py get <ts_code> --type financial` | 财务指标摘要 |
-| `uv run scripts/data.py get <ts_code> --type financial-full [--periods N]` | 完整财务指标 |
-| `uv run scripts/data.py get <ts_code> --type dividend [--years N]` | 分红信息 |
-| `uv run scripts/data.py get <ts_code> --type ohlcv [--days N]` | 日线行情 |
-| `uv run scripts/data.py get <ts_code> --type price [--days N]` | 股价位置判断 |
-| `uv run scripts/data.py get <ts_code> --type all` | 获取所有数据 |
+| 命令                                                                         | 说明                 |
+| -------------------------------------------------------------------------- | ------------------ |
+| `uv run scripts/data.py search <关键词>`                                      | 搜索股票代码             |
+| `uv run scripts/data.py get <ts_code> --type basic`                        | 股票基础信息             |
+| `uv run scripts/data.py get <ts_code> --type daily [--date YYYYMMDD]`      | 每日指标 (PE, PB, 市值等) |
+| `uv run scripts/data.py get <ts_code> --type financial`                    | 财务指标摘要             |
+| `uv run scripts/data.py get <ts_code> --type financial-full [--periods N]` | 完整财务指标             |
+| `uv run scripts/data.py get <ts_code> --type dividend [--years N]`         | 分红信息               |
+| `uv run scripts/data.py get <ts_code> --type ohlcv [--days N]`             | 日线行情               |
+| `uv run scripts/data.py get <ts_code> --type price [--days N]`             | 股价位置判断             |
+| `uv run scripts/data.py get <ts_code> --type all`                          | 获取所有数据             |
 
 ### 网络搜索 (scripts/search.py)
 
-| 命令  | 说明  |
-| --- | --- |
-| `uv run scripts/search.py query <查询> [--max-results N] [--depth basic\\|advanced]` | Tavily 搜索 |
-| `uv run scripts/search.py company <公司名> [--industry 行业]` | 搜索公司全面信息 |
-| `uv run scripts/search.py extract <json文件> [--max-length N]` | 提取搜索摘要 |
+| 命令                                                                                | 说明        |
+| --------------------------------------------------------------------------------- | --------- |
+| `uv run scripts/search.py query <查询> [--max-results N] [--depth basic\|advanced]` | Tavily 搜索 |
+| `uv run scripts/search.py company <公司名> [--industry 行业]`                          | 搜索公司全面信息  |
+| `uv run scripts/search.py extract <json文件> [--max-length N]`                      | 提取搜索摘要    |
 
 ### 生成文档 (scripts/report.py)
 
@@ -514,19 +391,21 @@
 
 **助手执行**：
 
-    # 1. 搜索股票代码
-    uv run scripts/data.py search <股票名称>
-    # 获取 ts_code 和行业信息
-    
-    # 2. 获取 Tushare 数据
-    uv run scripts/data.py get <ts_code> --type all
-    
-    # 3. 搜索网络信息
-    uv run scripts/search.py company <公司名称> --industry <行业>
-    
-    # 4. 执行评分规则（根据 SKILL 中的打分标准）
-    # ... 计算 scores, screening, checklist ...
-    
-    # 5. 生成并输出分析报告
+```bash
+# 1. 搜索股票代码
+uv run scripts/data.py search <股票名称>
+# 获取 ts_code 和行业信息
+
+# 2. 获取 Tushare 数据
+uv run scripts/data.py get <ts_code> --type all
+
+# 3. 搜索网络信息
+uv run scripts/search.py company <公司名称> --industry <行业>
+
+# 4. 执行评分规则（根据 SKILL 中的打分标准）
+# ... 计算 scores, screening, checklist ...
+
+# 5. 生成并输出分析报告
+```
 
 **输出**：在终端显示完整的选股打分报告
